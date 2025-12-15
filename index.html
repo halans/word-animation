@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Animation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Roboto+Mono, Sixtyfour+Convergence, Major+Mono+Display -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sixtyfour+Convergence:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="animation-wrapper">
+            <div id="row-1" class="row grey-row"></div>
+            <div id="row-2" class="row main-row"></div>
+            <div id="row-3" class="row grey-row"></div>
+        </div>
+
+        <div class="controls">
+            <div class="input-group">
+                <label for="word-input">REVEAL WORD</label>
+                <input type="text" id="word-input" value="ANTIGRAVITY" maxlength="20">
+            </div>
+            <div class="input-group">
+                <label for="hold-time">HOLD TIME (ms)</label>
+                <input type="number" id="hold-time" value="2000" step="100" min="500">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
