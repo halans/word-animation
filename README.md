@@ -24,11 +24,12 @@ The animation logic is contained in `textani.js`. You can tweak the internal con
 
 ```javascript
 let config = {
-    word: "ANTIGRAVITY",       // Default word
+    word: "HALANS.DEV",       // Default word
     holdTime: 2000,          // Default hold time in ms
     scrambleDuration: 1000,  // Time to wait in scramble state before revealing starts
     revealSpeed: 100,        // Speed of character revealing (ms per char)
     unrevealSpeed: 50,       // Speed of character hiding (ms per char)
+    fps: 15,                 // Animation frame rate (default 15 fps)
 };
 ```
 
