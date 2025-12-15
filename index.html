@@ -7,11 +7,11 @@
     <title>Text Animation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Roboto+Mono, Sixtyfour+Convergence, Major+Mono+Display -->
+    <!-- Any monospace font will work, Roboto+Mono, Sixtyfour+Convergence, Major+Mono+Display -->
     <link
         href="https://fonts.googleapis.com/css2?family=Sixtyfour+Convergence:ital,wght@0,400;0,700;1,400;1,700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="textani.css">
 </head>
 
 <body>
@@ -25,16 +25,20 @@
         <div class="controls">
             <div class="input-group">
                 <label for="word-input">REVEAL WORD</label>
-                <input type="text" id="word-input" value="ANTIGRAVITY" maxlength="20">
+                <input type="text" id="word-input" value="HALANS.DEV" maxlength="20">
             </div>
             <div class="input-group">
                 <label for="hold-time">HOLD TIME (ms)</label>
                 <input type="number" id="hold-time" value="2000" step="100" min="500">
             </div>
+            <div class="input-group">
+                <label for="speed-input">SPEED (FPS)</label>
+                <input type="number" id="speed-input" value="15" step="1" min="1" max="60">
+            </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="textani.js"></script>
 </body>
 
 </html>

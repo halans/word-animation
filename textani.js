@@ -6,11 +6,12 @@ const wordInput = document.getElementById('word-input');
 const holdTimeInput = document.getElementById('hold-time');
 
 let config = {
-    word: "ANTIGRAVITY",
+    word: "HALANS.DEV",
     holdTime: 2000,
     scrambleDuration: 1000, // Time to stay in scramble before revealing
     revealSpeed: 100, // ms per character reveal
     unrevealSpeed: 50, // ms per character unreveal
+    fps: 15, // Default FPS
 };
 
 const State = {
@@ -145,9 +146,12 @@ function updateGrid() {
     }
 }
 
+const speedInput = document.getElementById('speed-input');
+
+// ... (existing code) ...
+
 let lastFrameTime = 0;
-const fps = 15; // Limit visual noise update rate
-const frameInterval = 1000 / fps;
+let frameInterval = 1000 / config.fps;
 
 function tick(currentTime) {
     requestAnimationFrame(tick);
@@ -179,8 +183,22 @@ holdTimeInput.addEventListener('change', (e) => {
     config.holdTime = val;
 });
 
+if (speedInput) {
+    speedInput.addEventListener('change', (e) => {
+        let val = parseInt(e.target.value, 10);
+        if (val < 1) val = 1;
+        if (val > 60) val = 60;
+        config.fps = val;
+        frameInterval = 1000 / val;
+    });
+}
+
 // Init
 config.word = wordInput.value.toUpperCase();
 config.holdTime = parseInt(holdTimeInput.value, 10);
+if (speedInput) {
+    config.fps = parseInt(speedInput.value, 10);
+}
+frameInterval = 1000 / config.fps;
 initGrid();
 requestAnimationFrame(tick);
