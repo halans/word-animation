@@ -30,6 +30,7 @@ let config = {
     revealSpeed: 100,        // Speed of character revealing (ms per char)
     unrevealSpeed: 50,       // Speed of character hiding (ms per char)
     fps: 15,                 // Animation frame rate (default 15 fps)
+    letterCase: 'uppercase', // 'uppercase' or 'lowercase'
 };
 ```
 

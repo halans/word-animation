@@ -11,7 +11,10 @@ let config = {
     scrambleDuration: 1000, // Time to stay in scramble before revealing
     revealSpeed: 100, // ms per character reveal
     unrevealSpeed: 50, // ms per character unreveal
+    revealSpeed: 100, // ms per character reveal
+    unrevealSpeed: 50, // ms per character unreveal
     fps: 15, // Default FPS
+    letterCase: 'uppercase', // 'uppercase' or 'lowercase'
 };
 
 const State = {
@@ -29,7 +32,8 @@ let revealIndex = 0; // How many characters are revealed
 let row2Spans = [];
 
 function getRandomChar() {
-    return chars[Math.floor(Math.random() * chars.length)];
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    return config.letterCase === 'lowercase' ? char.toLowerCase() : char;
 }
 
 function createSpans(row, count) {
@@ -165,23 +169,28 @@ function tick(currentTime) {
 }
 
 // Event Listeners
-wordInput.addEventListener('input', (e) => {
-    // Only allow letters and numbers for simplicity, or upper case them
-    const val = e.target.value.toUpperCase();
-    if (val !== config.word) {
-        config.word = val;
-        // Reset animation to scramble to handle size change gracefully
-        currentState = State.SCRAMBLE_WAIT;
-        stateStartTime = Date.now();
-        initGrid();
-    }
-});
+if (wordInput) {
+    wordInput.addEventListener('input', (e) => {
+        // Only allow letters and numbers for simplicity, or upper case them
+        let val = e.target.value;
+        val = config.letterCase === 'lowercase' ? val.toLowerCase() : val.toUpperCase();
+        if (val !== config.word) {
+            config.word = val;
+            // Reset animation to scramble to handle size change gracefully
+            currentState = State.SCRAMBLE_WAIT;
+            stateStartTime = Date.now();
+            initGrid();
+        }
+    });
+}
 
-holdTimeInput.addEventListener('change', (e) => {
-    let val = parseInt(e.target.value, 10);
-    if (val < 500) val = 500;
-    config.holdTime = val;
-});
+if (holdTimeInput) {
+    holdTimeInput.addEventListener('change', (e) => {
+        let val = parseInt(e.target.value, 10);
+        if (val < 500) val = 500;
+        config.holdTime = val;
+    });
+}
 
 if (speedInput) {
     speedInput.addEventListener('change', (e) => {
@@ -194,8 +203,12 @@ if (speedInput) {
 }
 
 // Init
-config.word = wordInput.value.toUpperCase();
-config.holdTime = parseInt(holdTimeInput.value, 10);
+if (wordInput) {
+    config.word = config.letterCase === 'lowercase' ? wordInput.value.toLowerCase() : wordInput.value.toUpperCase();
+}
+if (holdTimeInput) {
+    config.holdTime = parseInt(holdTimeInput.value, 10);
+}
 if (speedInput) {
     config.fps = parseInt(speedInput.value, 10);
 }
