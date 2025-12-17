@@ -11,8 +11,6 @@ let config = {
     scrambleDuration: 1000, // Time to stay in scramble before revealing
     revealSpeed: 100, // ms per character reveal
     unrevealSpeed: 50, // ms per character unreveal
-    revealSpeed: 100, // ms per character reveal
-    unrevealSpeed: 50, // ms per character unreveal
     fps: 15, // Default FPS
     letterCase: 'uppercase', // 'uppercase' or 'lowercase'
 };
