@@ -6,13 +6,14 @@ const wordInput = document.getElementById('word-input');
 const holdTimeInput = document.getElementById('hold-time');
 
 let config = {
-    word: "HALANS.DEV",
+    words: ["HALANS.DEV", "ANTIGRAVITY", "GOOGLE"], // Array of words
     holdTime: 2000,
     scrambleDuration: 1000, // Time to stay in scramble before revealing
     revealSpeed: 100, // ms per character reveal
     unrevealSpeed: 50, // ms per character unreveal
     fps: 15, // Default FPS
     letterCase: 'uppercase', // 'uppercase' or 'lowercase'
+    currentWordIndex: 0,
 };
 
 const State = {
@@ -47,8 +48,12 @@ function createSpans(row, count) {
     return spans;
 }
 
+function getMaxWordLength() {
+    return config.words.reduce((max, word) => Math.max(max, word.length), 0);
+}
+
 function initGrid() {
-    const totalLen = config.word.length + 2;
+    const totalLen = getMaxWordLength() + 2;
     createSpans(row1, totalLen);
     row2Spans = createSpans(row2, totalLen); // Cache row2 spans for styling
     createSpans(row3, totalLen);
@@ -73,8 +78,8 @@ function updateState() {
             if (targetIndex > revealIndex) {
                 revealIndex = targetIndex;
             }
-            if (revealIndex > config.word.length) {
-                revealIndex = config.word.length;
+            if (revealIndex > config.words[config.currentWordIndex].length) {
+                revealIndex = config.words[config.currentWordIndex].length;
                 currentState = State.HOLD;
                 stateStartTime = now;
             }
@@ -83,24 +88,26 @@ function updateState() {
             if (elapsed > config.holdTime) {
                 currentState = State.UNREVEALING;
                 stateStartTime = now;
-                revealIndex = config.word.length;
+                revealIndex = config.words[config.currentWordIndex].length;
             }
             break;
         case State.UNREVEALING:
             const unrevealSteps = Math.floor(elapsed / config.unrevealSpeed);
-            revealIndex = config.word.length - unrevealSteps;
+            revealIndex = config.words[config.currentWordIndex].length - unrevealSteps;
 
             if (revealIndex < 0) {
                 revealIndex = 0;
                 currentState = State.SCRAMBLE_WAIT;
                 stateStartTime = now;
+                // Move to next word
+                config.currentWordIndex = (config.currentWordIndex + 1) % config.words.length;
             }
             break;
     }
 }
 
 function updateGrid() {
-    const totalLen = config.word.length + 2;
+    const totalLen = getMaxWordLength() + 2;
 
     // Update Row 1 and 3 entirely (always random)
     if (row1.children.length !== totalLen) initGrid();
@@ -131,17 +138,34 @@ function updateGrid() {
     row2Spans[totalLen - 1].classList.remove('revealed');
 
     // Middle word part
-    for (let i = 0; i < config.word.length; i++) {
-        const spanIndex = i + 1; // offset by 1
-        const span = row2Spans[spanIndex];
-        const targetChar = config.word[i];
+    const currentWord = config.words[config.currentWordIndex];
+    // Center the word: calculate start offset (excluding padding chars at 0 and totalLen-1)
+    // Available space for word is indices 1 to totalLen-2. Length is totalLen - 2.
+    // Start index within that space = (availableSpace - wordLength) / 2
+    // Absolute start index = 1 + start index
+    const availableSpace = totalLen - 2;
+    const paddingLeft = Math.floor((availableSpace - currentWord.length) / 2);
+    const wordStartIndex = 1 + paddingLeft;
 
-        if (i < revealIndex) {
-            // Revealed
-            span.textContent = targetChar;
-            span.classList.add('revealed');
+    for (let i = 1; i < totalLen - 1; i++) {
+        const span = row2Spans[i];
+
+        // Check if this span is part of the word
+        if (i >= wordStartIndex && i < wordStartIndex + currentWord.length) {
+            const charIndex = i - wordStartIndex;
+            const targetChar = currentWord[charIndex];
+
+            if (charIndex < revealIndex) {
+                // Revealed
+                span.textContent = targetChar;
+                span.classList.add('revealed');
+            } else {
+                // Scrambling
+                span.textContent = getRandomChar();
+                span.classList.remove('revealed');
+            }
         } else {
-            // Scrambling
+            // Outside the word (padding), simply scramble
             span.textContent = getRandomChar();
             span.classList.remove('revealed');
         }
@@ -169,12 +193,17 @@ function tick(currentTime) {
 // Event Listeners
 if (wordInput) {
     wordInput.addEventListener('input', (e) => {
-        // Only allow letters and numbers for simplicity, or upper case them
+        // Allow comma separated values
         let val = e.target.value;
         val = config.letterCase === 'lowercase' ? val.toLowerCase() : val.toUpperCase();
-        if (val !== config.word) {
-            config.word = val;
-            // Reset animation to scramble to handle size change gracefully
+
+        const newWords = val.split(',').map(s => s.trim()).filter(s => s.length > 0);
+
+        // Simple check to see if words changed (ignoring order/deep check for performance, just join)
+        if (newWords.join(',') !== config.words.join(',')) {
+            config.words = newWords.length > 0 ? newWords : [""]; // Fallback to empty string if empty
+            // Reset animation
+            config.currentWordIndex = 0;
             currentState = State.SCRAMBLE_WAIT;
             stateStartTime = Date.now();
             initGrid();
@@ -202,7 +231,9 @@ if (speedInput) {
 
 // Init
 if (wordInput) {
-    config.word = config.letterCase === 'lowercase' ? wordInput.value.toLowerCase() : wordInput.value.toUpperCase();
+    let val = config.letterCase === 'lowercase' ? wordInput.value.toLowerCase() : wordInput.value.toUpperCase();
+    const newWords = val.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    if (newWords.length > 0) config.words = newWords;
 }
 if (holdTimeInput) {
     config.holdTime = parseInt(holdTimeInput.value, 10);

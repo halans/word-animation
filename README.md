@@ -24,7 +24,7 @@ The animation logic is contained in `textani.js`. You can tweak the internal con
 
 ```javascript
 let config = {
-    word: "HALANS.DEV",       // Default word
+    words: ["HALANS.DEV", "ANTIGRAVITY", "GOOGLE"], // Array of words to cycle through
     holdTime: 2000,          // Default hold time in ms
     scrambleDuration: 1000,  // Time to wait in scramble state before revealing starts
     revealSpeed: 100,        // Speed of character revealing (ms per char)
